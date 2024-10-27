@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="js/vue.global.js"></script>
+</head>
+<body>
+	<div id="app"></div>
+	<script>
+		// in real, promocodes are on server
+		function getSaleByApi(promo){
+			return new Promise(resolve => {
+				let promoCodes = {
+					newyear: 30,
+					simple : 10
+				};
+
+				setTimeout(() => resolve(promoCodes[promo] ?? 0, 500));
+			})
+		}
+
+		const { createApp } = Vue;
+		
+		const app = createApp({
+			template: `
+				<div>
+					Promo: <input type="text" v-model.lazy="promo">
+					<hr>
+					<div v-if="hasSale">
+						<s>{{ price }}</s>
+						<span class="alert alert-success mx-3">-{{ sale }}%</span>
+						<span>{{ finalPrice }}</span>
+					</div>
+					<div v-else>{{ finalPrice }}</div>
+				</div>
+			`,
+			data(){
+				return {
+					price: 1000,
+					promo: ''
+				}
+			},
+			computed: {
+				sale(){
+					// comnputed only sync !!!!!!!!!!
+					getSaleByApi('simple').then(value => value);
+					return 1;
+				},
+				hasSale(){
+					return this.sale > 0;
+				},
+				finalPrice(){
+					return this.price * ( 1 - this.sale / 100 );
+				}
+			}
+		});
+
+		app.mount('#app');
+	</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="js/vue.global.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+	const { createApp } = Vue;
+	
+	const app = createApp({
+		template: `
+			<div class="wrapper">
+				<h2>Catatog</h2>
+				<div class="row mb-3">
+					<div v-for="product in products" class="col">
+						<h3>{{ product.title }}</h3>
+						<div>{{ product.cost }}</div>
+						<button v-if="cart.includes(product.id)" @click="remove(product.id)">Remove from cart</button>
+						<button v-else @click="add(product.id)">Add to cart</button>
+					</div>
+				</div>
+				<div class="mb-3">
+					<div><strong>Money: {{ money }}</strong></div>
+					<div><strong>Total: {{ total }}</strong></div>
+				</div>
+				<div v-if="hasMoney">
+					<button>Order now</button>
+				</div>
+				<div v-else class="alert alert-danger">Too much total, no money</div>
+			</div>
+		`,
+		data(){
+			return {
+				products: [
+					{ id: 1, title: 'Milk', cost: 100 },
+					{ id: 2, title: 'Salmon fish', cost: 2000 },
+					{ id: 3, title: 'Vine', cost: 1000 }
+				],
+				cart: [],
+				money: 3000,
+			}
+		},
+		computed: {
+			total(){
+				return this.cart.reduce((total, id) => {
+					return total + this.products.find(pr => pr.id === id).cost;
+				}, 0);
+			},
+			hasMoney(){
+				return this.money >= this.total;
+			}
+		},
+		methods: {
+			add(id){
+				this.cart.push(id);
+			},
+			remove(id){
+				this.cart = this.cart.filter(el => el !== id);
+			}
+		}
+	});
+
+	app.mount('#app');
+</script>
+</body>
+</html>

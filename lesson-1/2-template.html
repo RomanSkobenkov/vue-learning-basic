@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="js/vue.global.js"></script>
+</head>
+<body>
+	<div id="app"></div>
+	<script>
+		/*
+			{{ }}
+			v-bind		 	v-bind:nameAttr="attrValue" :nameAttr="attrValue"
+			v-if
+			v-show
+			v-on				v-on:click="someMethod" @click="someMethod" 
+			
+			@change=""
+
+				.addEventListener('change', function ($event){
+					this.name = $event.target.value
+				};
+
+			v-model.lazy
+				:value="name"
+				@input="name = $event.target.value"
+		*/
+		
+
+		const { createApp } = Vue;
+		
+		const app = createApp({
+			template: `
+				<input type="text" :value="name" @change="name = $event.target.value">
+				<div v-if="nameFilled">Hello, {{ name }}</div>
+			`,
+			data(){
+				return {
+					name: ''
+				}
+			},
+			computed: {
+				nameFilled(){
+					return this.name.trim().length > 0;
+				}
+			}
+		});
+
+/* 	const cmp = {
+			_sys: {
+				_data: {
+					name: '',
+					nameFilled: false 
+				}
+			}
+		}
+
+		Object.defineProperty(cmp, 'name', {
+			get(){
+				return this._sys._data.name;
+			},
+			set(newVal){
+				this._sys._data.name = newVal;
+				this._sys._data.nameFilled = this._sys._data.name.trim().length > 0 // react
+			}
+		})
+
+		Object.defineProperty(cmp, 'nameFilled', {
+			get(){
+				return this._sys._data.nameFilled;
+			}
+		}) */
+
+	/* 	VueCore
+			copmonentSchema
+
+			const cmp = {}
+
+			for(let name of copmonentSchema.data()){
+				cmp[name] = 'someVal'; //getset 2, proxy 3
+			}
+
+			for(let name of copmonentSchema.computed){
+				cmp[name] = 'someVal'; //getset 2, proxy 3
+			} */
+
+		app.mount('#app');
+	</script>
+</body>
+</html>
