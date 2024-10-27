@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>1</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="js/vue.global.js"></script>
+	<style>
+		.passwordGuarded{
+			width: 300px;
+			height: 10px;
+			border-radius: 5px;
+			border: 1px solid #616161;
+			margin-top: 10px;
+			transition: background-color 0.5s;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="sample">
+			<form v-if="!formDone" @submit.prevent="formDone = true">
+				<div class="form-group mb-3">
+					<label>First Name</label>
+					<input v-model.trim="user.firstName" :class="{ 'border border-danger': !user.firstName }" type="text" class="form-control" >
+				</div>
+				<div class="form-group mb-3">
+					<label>Last Name</label>
+					<input type="text" class="form-control" v-model.trim="user.lastName">
+				</div>
+				<div class="form-group mb-3">
+					<label>Email</label>
+					<input type="text" class="form-control" v-model.trim="user.email">
+				</div>
+				<div class="form-group mb-3">
+					<label>Phone</label>
+					<input type="text" class="form-control" v-model.trim="user.phone">
+				</div>
+				<div class="form-group mb-3">
+					<label>Password</label>
+					<input type="password" class="form-control" v-model.trim="user.password">
+					<div class="passwordGuarded" :style="passwordColor"></div>
+				</div>
+				<div class="form-group">
+					<label>Guests</label>
+					<input @click="addGuest" type="button" class="btn btn-primary" value="+">
+				</div>
+				<div>
+					<div v-for="guest,i in guests" class="form-group">
+						<label @dblclick="removeGuest(i)">Guest {{ i + 1 }}</label>
+						<input v-model.trim="guests[i]" type="text" class="form-control" >
+					</div>
+				</div>
+				<hr>
+				<button :disabled="!userValid" :class="sendBtnClasses" class="btn">Send Data</button>
+			</form>
+			<div v-else>
+				<h2>All done!</h2>
+				<table class="table table-bordered">
+					<tr>
+						<td>Email</td>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr>
+						<td>Phone</td>
+						<td>{{ user.phone }}</td>
+					</tr>
+					<tr>
+						<td>FullName</td>
+						<td>{{ fullName }}</td>
+					</tr>
+					<tr v-if="realGuests.length > 0">
+						<td>Guests</td>
+						<td>
+							<ul class="list-group">
+								<li v-for="guest in realGuests" class="list-group-item">{{ guest }}</li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script>
+		/*
+			:class="string"
+			:class="[class1, class2, ...]"
+			:class="{ class1: true,  class2: false }"
+			:class="[string, object]" // hz
+
+		*/
+
+		const { createApp } = Vue;
+
+		createApp({
+			data: function(){
+				return {
+					user: {
+						firstName: '',
+						lastName: '',
+						email: '',
+						phone: '',
+						password: ''
+					},
+					guests: [],
+					formDone: false
+				}
+			},
+			computed: {
+				passwordColor(){
+					let q = Math.min(this.user.password.length / 8, 1);
+					let color = `rgb(${(1 - q) * 255}, ${q * 255}, 0)`;
+
+					return {
+						backgroundColor: color
+					}
+				}
+			},
+			methods: {
+				addGuest(){
+					this.guests.push('');
+				},
+				removeGuest(i){
+					this.guests.splice(i, 1);
+				}
+			}
+		}).mount('.sample');
+
+	</script>
+</body>
+</html>
